@@ -1,0 +1,21 @@
+[
+  {
+    "id": "b3e0926c-6e62-469e-86bd-9f1521c5d3ac",
+    "firma": "STROBOG ",
+    "position": "IT Support 1st Level",
+    "ansprechpartner": "Damen und Herren",
+    "datum": "2025-10-17",
+    "status": "Absage",
+    "notizen": "testblast"
+  },
+  {
+    "firma": "Burda Digital",
+    "position": "IT Support 1st Level",
+    "ansprechpartner": "Damen und Herren",
+    "datum": "2025-10-30",
+    "status": "Gesendet",
+    "notizen": "Hoffnungsschimmer",
+    "id": "06160085-6b09-4f5f-9524-b3c7d7dca62c",
+    "follow_up_date": "2025-11-06"
+  }
+]
