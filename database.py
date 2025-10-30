@@ -6,12 +6,17 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-DATA_PATH = Path(__file__).parent / "data" / "bewerbungen.json"
+# When running as a bundled exe (PyInstaller --onefile) resources are
+# extracted to a temporary folder pointed to by sys._MEIPASS. Use that
+# location when present; otherwise fall back to the source tree.
+BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+DATA_PATH = BASE_DIR / "data" / "bewerbungen.json"
 
 
 def _ensure_data_file():
