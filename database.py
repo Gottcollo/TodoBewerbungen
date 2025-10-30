@@ -16,13 +16,37 @@ from uuid import uuid4
 # extracted to a temporary folder pointed to by sys._MEIPASS. Use that
 # location when present; otherwise fall back to the source tree.
 BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
-DATA_PATH = BASE_DIR / "data" / "bewerbungen.json"
+
+# Choose a persistent storage location for user data when running as a
+# frozen single-file executable. Writing into the extracted _MEIPASS
+# folder is ephemeral; instead store user data in %APPDATA%/EasyBewerbungen
+# on Windows so the data persists across runs and is writable.
+if getattr(sys, "frozen", False):
+	appdata = os.getenv("APPDATA") or str(Path.home() / "AppData" / "Roaming")
+	PERSIST_DIR = Path(appdata) / "EasyBewerbungen"
+else:
+	# During development keep data next to the source tree for convenience
+	PERSIST_DIR = Path(__file__).parent / "data"
+
+DATA_PATH = PERSIST_DIR / "bewerbungen.json"
 
 
 def _ensure_data_file():
-	DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+	# Ensure the directory exists. If a packaged default data file exists
+	# (bundled via PyInstaller --add-data) copy it into the persistent
+	# location on first run so users get starter content.
+	PERSIST_DIR.mkdir(parents=True, exist_ok=True)
 	if not DATA_PATH.exists():
-		DATA_PATH.write_text("[]", encoding="utf-8")
+		# packaged default, if present
+		packaged = BASE_DIR / "data" / "bewerbungen.json"
+		if packaged.exists():
+			try:
+				DATA_PATH.write_text(packaged.read_text(encoding="utf-8"), encoding="utf-8")
+			except Exception:
+				# fallback to empty list
+				DATA_PATH.write_text("[]", encoding="utf-8")
+		else:
+			DATA_PATH.write_text("[]", encoding="utf-8")
 
 
 def load_data() -> List[Dict[str, Any]]:
